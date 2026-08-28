@@ -19,7 +19,7 @@ private const val INVITE_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 /**
  * Firestore-структура (см. также правила безопасности в консоли Firebase):
  *  - users/{uid}: { email, displayName, familyId }
- *  - families/{inviteCode}: { name, inviteCode, ownerUid, memberUids: [uid...], createdAt }
+ *  - families/{inviteCode}: { name, inviteCode, ownerUid, memberUids (список uid), createdAt }
  *  - families/{inviteCode}/family_members, /categories, /savings_accounts,
  *    /transactions, /goals, /tasks, /calendar_events, /wishlist_items,
  *    /shopping_items — данные семьи, синхронизируются с Room на каждом
