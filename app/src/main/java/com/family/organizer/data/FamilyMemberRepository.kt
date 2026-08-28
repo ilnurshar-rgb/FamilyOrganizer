@@ -20,4 +20,12 @@ class FamilyMemberRepository(
 ) {
 
     fun observeMembers(): Flow<List<FamilyMember>> = dao.observeAll()
+
+    suspend fun rename(member: FamilyMember, newName: String) {
+        val trimmed = newName.trim()
+        if (trimmed.isBlank() || trimmed == member.name) return
+        val updated = member.copy(name = trimmed)
+        dao.upsert(updated)
+        sync.push(updated, updated.id)
+    }
 }
