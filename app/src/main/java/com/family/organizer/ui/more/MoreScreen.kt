@@ -16,14 +16,20 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.family.organizer.data.FamilyMember
+import com.family.organizer.ui.common.SimpleAddDialog
 import com.family.organizer.ui.common.colorForSlot
 import java.time.LocalDate
 
@@ -40,6 +46,9 @@ fun MoreScreen(
     val events by viewModel.events.collectAsState()
     val goals by viewModel.goals.collectAsState()
     val wishlistItems by viewModel.wishlistItems.collectAsState()
+
+    var memberBeingRenamed by remember { mutableStateOf<FamilyMember?>(null) }
+    var renameText by remember { mutableStateOf("") }
 
     val today = LocalDate.now()
     val weekAhead = today.plusDays(7)
@@ -67,8 +76,23 @@ fun MoreScreen(
             Card(shape = RoundedCornerShape(18.dp), modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Text("Семья", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(bottom = 8.dp))
+                    Text(
+                        "Нажмите на имя, чтобы изменить его",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    )
                     members.forEach { member ->
-                        Row(modifier = Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    memberBeingRenamed = member
+                                    renameText = member.name
+                                }
+                                .padding(vertical = 6.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
                             Box(
                                 modifier = Modifier.size(36.dp).background(colorForSlot(member.colorSlot), CircleShape),
                                 contentAlignment = Alignment.Center,
@@ -105,6 +129,27 @@ fun MoreScreen(
         }
 
         item { Box(modifier = Modifier.height(8.dp)) }
+    }
+
+    val editingMember = memberBeingRenamed
+    if (editingMember != null) {
+        SimpleAddDialog(
+            title = "Имя участника",
+            confirmLabel = "Сохранить",
+            confirmEnabled = renameText.isNotBlank(),
+            onDismiss = { memberBeingRenamed = null },
+            onConfirm = {
+                viewModel.renameMember(editingMember, renameText)
+                memberBeingRenamed = null
+            },
+        ) {
+            OutlinedTextField(
+                value = renameText,
+                onValueChange = { renameText = it },
+                label = { Text("Имя") },
+                singleLine = true,
+            )
+        }
     }
 }
 

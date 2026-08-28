@@ -14,9 +14,10 @@ import com.family.organizer.data.WishlistItemRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class MoreViewModel(
-    familyMemberRepository: FamilyMemberRepository,
+    private val familyMemberRepository: FamilyMemberRepository,
     calendarEventRepository: CalendarEventRepository,
     goalRepository: GoalRepository,
     wishlistItemRepository: WishlistItemRepository,
@@ -33,6 +34,10 @@ class MoreViewModel(
 
     val wishlistItems: StateFlow<List<WishlistItem>> = wishlistItemRepository.observeItems()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
+
+    fun renameMember(member: FamilyMember, newName: String) {
+        viewModelScope.launch { familyMemberRepository.rename(member, newName) }
+    }
 }
 
 class MoreViewModelFactory(
