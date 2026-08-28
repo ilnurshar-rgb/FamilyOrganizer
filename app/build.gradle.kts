@@ -60,7 +60,12 @@ dependencies {
     kapt("androidx.room:room-compiler:2.6.1")
 
     // Firebase — аккаунты и синхронизация между устройствами семьи
-    implementation(platform("com.google.firebase:firebase-bom:34.18.0"))
+    // Версия зафиксирована на 33.x (а не самой свежей 34.x), потому что
+    // начиная с некоторой версии 34.x firebase-auth собирается более новым
+    // компилятором Kotlin, чем используется в проекте (2.0.21) — его
+    // .kotlin_module metadata (2.3.0) несовместим с нашим компилятором
+    // ("Module was compiled with an incompatible version of Kotlin").
+    implementation(platform("com.google.firebase:firebase-bom:33.15.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 
