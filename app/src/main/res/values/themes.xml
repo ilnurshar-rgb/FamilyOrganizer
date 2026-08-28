@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Базовая системная тема окна (используется только до отрисовки Compose-контента,
+         сама палитра приложения задаётся в ui/theme/Theme.kt через Material3 ColorScheme). -->
+    <style name="Theme.FamilyOrganizer" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:statusBarColor">@color/window_background</item>
+        <item name="android:navigationBarColor">@color/window_background</item>
+    </style>
+</resources>
